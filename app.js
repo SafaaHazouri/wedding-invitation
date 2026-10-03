@@ -118,7 +118,7 @@ function ticketHtml(entry) {
 
   return `
     <button type="button" class="ticket-close" id="ticketClose" aria-label="إغلاق">×</button>
-    <p class="ticket-kicker">دعوة محمد وصفاء</p>
+    <p class="ticket-kicker">دعوة محمد وأميرته</p>
     <h3>${escapeHtml(entry.name)}</h3>
     <span class="status-badge ${statusClass(entry.status)}">${statusLabel(entry.status)}</span>
     <p>${accepted ? "الجمعة 16 أكتوبر 2026 • 3:00" : "الموافقة وتأكيد الدخول من أصحاب الدعوة فقط"}</p>
