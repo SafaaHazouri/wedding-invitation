@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>مسح باركود الدخول</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=El+Messiri:wght@600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="admin-body">
+  <main class="admin-shell">
+    <section class="admin-card" id="lockCard">
+      <img class="admin-logo" src="logo-ms.png" alt="" />
+      <h1>باب الصالة</h1>
+      <p>أدخلوا كلمة المرور لبدء مسح باركود المعازيم</p>
+      <form id="lockForm">
+        <input type="password" id="adminKey" placeholder="كلمة المرور" required />
+        <button type="submit" class="submit-btn">دخول</button>
+        <p class="form-note" id="lockNote" hidden></p>
+      </form>
+    </section>
+
+    <section class="admin-panel" id="scanCard" hidden>
+      <header class="admin-head">
+        <div>
+          <h1>مسح باركود الدخول</h1>
+          <p>وجّهوا الكاميرا إلى باركود المدعو أو اكتبوا الرمز</p>
+        </div>
+      </header>
+      <video id="camera" class="checkin-video" playsinline muted hidden></video>
+      <form class="scan-box" id="scanForm">
+        <input id="scanInput" type="text" inputmode="text" autocomplete="off" placeholder="امسحوا الباركود أو اكتبوا رمز التذكرة" />
+        <button type="submit" class="submit-btn">تأكيد الدخول</button>
+      </form>
+      <p class="scan-result" id="scanResult" hidden></p>
+    </section>
+  </main>
+  <script src="ticket.js"></script>
+  <script src="checkin.js"></script>
+</body>
+</html>
