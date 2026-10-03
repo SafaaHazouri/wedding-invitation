@@ -5,3 +5,13 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+[[redirects]]
+  from = "/halim"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/halim/"
+  to = "/index.html"
+  status = 200
