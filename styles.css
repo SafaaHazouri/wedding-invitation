@@ -555,29 +555,6 @@ body::before {
   box-shadow: 0 16px 40px rgba(111, 45, 56, 0.12);
 }
 
-.zaffa-box {
-  max-width: 760px;
-  margin: 28px auto 0;
-  padding: 22px 28px;
-  text-align: center;
-  background: linear-gradient(180deg, #fbf6ef, #f4e6d8);
-  border: 1px solid rgba(184, 149, 90, 0.45);
-  border-radius: 20px;
-  box-shadow: 0 12px 32px rgba(111, 45, 56, 0.06);
-}
-
-.zaffa-kicker {
-  font-family: var(--font-title);
-  color: var(--burgundy);
-  margin-bottom: 8px;
-}
-
-.zaffa-box p:last-child {
-  margin: 0;
-  line-height: 2;
-  color: var(--ink);
-}
-
 .women-notes,
 .women-form-note {
   max-width: 760px;
