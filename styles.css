@@ -560,8 +560,8 @@ body::before {
   margin: 28px auto 0;
   padding: 22px 28px;
   text-align: center;
-  background: var(--white);
-  border: 1px solid rgba(184, 149, 90, 0.35);
+  background: #f8f1e6;
+  border: 1px solid rgba(184, 149, 90, 0.45);
   border-radius: 24px;
 }
 
