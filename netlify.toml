@@ -15,3 +15,13 @@
   from = "/halim/"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/share"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/share/"
+  to = "/index.html"
+  status = 200
