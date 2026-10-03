@@ -25,3 +25,13 @@
   from = "/share/"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/card"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/card/"
+  to = "/index.html"
+  status = 200
