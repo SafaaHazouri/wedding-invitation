@@ -58,7 +58,7 @@ function render(items) {
   `;
 
   if (!items.length) {
-    rows.innerHTML = '<tr><td colspan="6">لا توجد طلبات بعد</td></tr>';
+    rows.innerHTML = '<tr><td colspan="7">لا توجد طلبات بعد</td></tr>';
     return;
   }
 
@@ -70,6 +70,7 @@ function render(items) {
     return `
     <tr>
       <td>${escapeHtml(item.name || "")}</td>
+      <td>${escapeHtml(item.invitedBy || "—")}</td>
       <td><span class="status-badge ${statusClass(item.status)}">${statusLabel(item.status || "pending")}</span></td>
       <td>${barcode}</td>
       <td>${item.checkedIn ? "دخل" : accepted ? "لم يدخل" : "—"}</td>

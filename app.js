@@ -61,7 +61,7 @@ function updateCountdown() {
 
   const caption = document.getElementById("countdownCaption");
   if (caption) {
-    caption.textContent = "العدّ إلى الحفل • الجمعة 16 أكتوبر 2026 • الرجال 3:00 • النساء 7:00";
+    caption.textContent = "العدّ إلى الحفل • الجمعة 16 أكتوبر 2026 • الرجال 3:00 • النساء من 7:00";
   }
 }
 
@@ -259,6 +259,7 @@ async function sendRsvp(entry) {
     "form-name": "rsvp",
     name: entry.name,
     status: "pending",
+    invitedBy: entry.invitedBy,
     wish: entry.wish,
     createdAt: entry.createdAt,
     ticketId: entry.ticketId || "",
@@ -278,13 +279,14 @@ form.addEventListener("submit", async (event) => {
   const entry = {
     name: String(data.get("name") || "").trim(),
     status: "pending",
+    invitedBy: String(data.get("invitedBy") || "").trim(),
     wish: String(data.get("wish") || "").trim(),
     createdAt: new Date().toISOString(),
     ticketId: generateTicketId(),
     checkedIn: false,
   };
 
-  if (!entry.name) return;
+  if (!entry.name || !entry.invitedBy) return;
 
   const submitBtn = form.querySelector(".submit-btn");
   submitBtn.disabled = true;

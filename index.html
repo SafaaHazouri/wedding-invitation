@@ -14,6 +14,7 @@
   <form name="rsvp" data-netlify="true" hidden>
     <input name="name" />
     <input name="status" />
+    <input name="invitedBy" />
     <input name="wish" />
     <input name="createdAt" />
     <input name="ticketId" />
@@ -142,7 +143,7 @@
             <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M24 14v11l8 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </div>
           <h4>حفل النساء</h4>
-          <p>7:00</p>
+          <p>من 7:00</p>
         </article>
       </div>
 
@@ -169,6 +170,12 @@
           <small>اضغطوا على الخريطة للانتقال إلى عنوان الحفل</small>
         </div>
       </div>
+
+      <a class="contact-card" href="tel:+963980200217">
+        <h4>للاستفسار</h4>
+        <p dir="ltr">+963 980 200 217</p>
+        <small>اضغطوا للاتصال</small>
+      </a>
     </section>
 
     <section class="section rsvp-section reveal" id="rsvp">
@@ -189,6 +196,11 @@
           <div class="field">
             <label for="rsvpName">الاسم الكريم</label>
             <input id="rsvpName" type="text" name="name" placeholder="أدخلوا اسمكم الكامل" required maxlength="80" autocomplete="name" dir="rtl" />
+          </div>
+
+          <div class="field">
+            <label for="rsvpInvitedBy">مدعو من قبل</label>
+            <input id="rsvpInvitedBy" type="text" name="invitedBy" placeholder="اسم من دعاكم" required maxlength="80" dir="rtl" />
           </div>
 
           <div class="field">
