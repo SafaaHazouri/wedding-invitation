@@ -15,7 +15,6 @@
     <input name="name" />
     <input name="status" />
     <input name="wish" />
-    <input name="guestType" />
     <input name="createdAt" />
     <input name="ticketId" />
   </form>
@@ -48,12 +47,7 @@
         </div>
 
         <div class="cover-actions" id="envelope">
-          <div class="guest-switch" role="group" aria-label="نوع الدعوة">
-            <button type="button" class="guest-btn" data-guest="women">السيدات</button>
-            <button type="button" class="guest-btn" data-guest="men">الرجال</button>
-          </div>
-          <p class="guest-hint" id="guestHint">اختاروا نوع الدعوة ثم افتحوها</p>
-          <button type="button" class="open-btn" id="openInvitation" disabled>افتحوا الدعوة</button>
+          <button type="button" class="open-btn" id="openInvitation">افتحوا الدعوة</button>
         </div>
       </div>
     </div>
@@ -134,27 +128,25 @@
           </div>
           <h4>التاريخ</h4>
           <p>الجمعة 16 أكتوبر 2026</p>
-          <small>الموافق ٥ جمادى الأولى ١٤٤٨</small>
+          <small>الموافق 5 جمادى الأولى 1448</small>
         </article>
-        <article class="detail-card time-card" data-audience="men">
+        <article class="detail-card">
           <div class="detail-icon" aria-hidden="true">
             <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M24 14v11l8 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </div>
           <h4>حفل الرجال</h4>
-          <p>من الثالثة حتى السادسة</p>
-          <small>الاستقبال من الساعة الثالثة عصرًا</small>
+          <p>3:00 – 6:00</p>
         </article>
-        <article class="detail-card time-card" data-audience="women">
+        <article class="detail-card">
           <div class="detail-icon" aria-hidden="true">
             <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M24 14v11l8 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </div>
           <h4>حفل النساء</h4>
-          <p>من الساعة السابعة مساءً</p>
-          <small>الاستقبال من السابعة مساءً</small>
+          <p>7:00</p>
         </article>
       </div>
 
-      <aside class="women-notes" id="womenNotes" hidden>
+      <aside class="women-notes">
         <p>وبكل محبة، نرجو من ضيفاتنا العزيزات:</p>
         <p>أن تكون فرحتنا هذه للكبار فقط، وأن تزيّنن حضوركنّ بلباسٍ محتشم، مع الاعتذار عن التصوير.</p>
         <p>شاكرين لكنّ تفهّمكنّ ومحبّتكنّ، وحرصكنّ على خصوصية فرحتنا.</p>
@@ -188,12 +180,11 @@
         <span></span>
       </div>
       <p class="section-lead">الدعوة باسم المدعو فقط. اكتبوا اسمكم الكريم، والموافقة وتأكيد الدخول من أصحاب الدعوة.</p>
-      <p class="women-form-note" id="womenFormNote" hidden>بكل محبة: فرحتنا للكبار فقط، مع لباسٍ محتشم والاعتذار عن التصوير، حفظًا لخصوصية هذه الليلة الجميلة.</p>
+      <p class="women-form-note">بكل محبة: فرحتنا للكبار فقط، مع لباسٍ محتشم والاعتذار عن التصوير، حفظًا لخصوصية هذه الليلة الجميلة.</p>
 
       <div class="rsvp-grid">
         <form class="rsvp-form" id="rsvpForm" name="rsvp" data-netlify="true" dir="rtl">
           <input type="hidden" name="form-name" value="rsvp" />
-          <input type="hidden" name="guestType" id="rsvpGuestType" />
 
           <div class="field">
             <label for="rsvpName">الاسم الكريم</label>

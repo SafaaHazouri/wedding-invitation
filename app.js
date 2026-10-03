@@ -4,12 +4,8 @@ function weddingAt(hour, minute = 0) {
   return new Date(Date.UTC(2026, 9, 16, hour - TIMEZONE_OFFSET, minute, 0));
 }
 
-const EVENT_TIMES = {
-  men: weddingAt(15, 0),
-  women: weddingAt(19, 0),
-};
+const EVENT_TIME = weddingAt(15, 0);
 const TICKET_KEY = "mohammed-safaa-ticket";
-const GUEST_KEY = "mohammed-safaa-guest";
 const VENUE_QUERY = "صالة الذهبية حلب";
 const RSVP_ENDPOINT = "/api/rsvp";
 const VENUE_MAPS_URL = "https://maps.app.goo.gl/QSQ3E658sgn9WNhe9?g_st=awb";
@@ -24,13 +20,8 @@ const formNote = document.getElementById("formNote");
 const ticketOverlay = document.getElementById("ticketOverlay");
 const ticketCard = document.getElementById("ticketCard");
 const myTicket = document.getElementById("myTicket");
-const guestHint = document.getElementById("guestHint");
-const womenNotes = document.getElementById("womenNotes");
-const womenFormNote = document.getElementById("womenFormNote");
 const mapLink = document.getElementById("mapLink");
 const mapFrame = document.getElementById("mapFrame");
-
-let guestType = sessionStorage.getItem(GUEST_KEY) || "";
 
 if (mapLink) mapLink.href = VENUE_MAPS_URL;
 if (mapFrame) {
@@ -54,12 +45,8 @@ function pad(value) {
   return String(value).padStart(2, "0");
 }
 
-function getCountdownTarget() {
-  return guestType === "women" ? EVENT_TIMES.women : EVENT_TIMES.men;
-}
-
 function updateCountdown() {
-  const target = getCountdownTarget();
+  const target = EVENT_TIME;
   const diff = Math.max(0, target.getTime() - Date.now());
   const totalSeconds = Math.floor(diff / 1000);
   const days = Math.floor(totalSeconds / 86400);
@@ -74,34 +61,8 @@ function updateCountdown() {
 
   const caption = document.getElementById("countdownCaption");
   if (caption) {
-    caption.textContent = guestType === "women"
-      ? "العدّ إلى حفل السيدات • الجمعة 16 أكتوبر 2026 • السابعة مساءً"
-      : "العدّ إلى حفل الرجال • الجمعة 16 أكتوبر 2026 • الثالثة عصرًا";
+    caption.textContent = "العدّ إلى الحفل • الجمعة 16 أكتوبر 2026 • الرجال 3:00 • النساء 7:00";
   }
-}
-
-function applyGuestType(type) {
-  guestType = type;
-  sessionStorage.setItem(GUEST_KEY, type);
-  const guestField = document.getElementById("rsvpGuestType");
-  if (guestField) guestField.value = type;
-
-  document.querySelectorAll(".guest-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.guest === type);
-  });
-
-  document.querySelectorAll(".time-card").forEach((card) => {
-    card.classList.toggle("is-active", card.dataset.audience === type);
-  });
-
-  const isWomen = type === "women";
-  womenNotes.hidden = !isWomen;
-  womenFormNote.hidden = !isWomen;
-  openBtn.disabled = false;
-  guestHint.textContent = isWomen
-    ? "دعوة السيدات: السابعة مساءً"
-    : "دعوة الرجال: من الثالثة حتى السادسة";
-  updateCountdown();
 }
 
 function getSavedTicket() {
@@ -160,7 +121,7 @@ function ticketHtml(entry) {
     <p class="ticket-kicker">دعوة محمد وصفاء</p>
     <h3>${escapeHtml(entry.name)}</h3>
     <span class="status-badge ${statusClass(entry.status)}">${statusLabel(entry.status)}</span>
-    <p>${accepted ? guestLabel(entry.guestType) : "الموافقة وتأكيد الدخول من أصحاب الدعوة فقط"}</p>
+    <p>${accepted ? "الجمعة 16 أكتوبر 2026 • 3:00" : "الموافقة وتأكيد الدخول من أصحاب الدعوة فقط"}</p>
     ${barcode}
   `;
 }
@@ -262,12 +223,7 @@ function setActiveLink() {
   });
 }
 
-document.querySelectorAll(".guest-btn").forEach((btn) => {
-  btn.addEventListener("click", () => applyGuestType(btn.dataset.guest));
-});
-
 openBtn.addEventListener("click", () => {
-  if (!guestType) return;
   cover.classList.add("hide");
   startSectionMotion();
   goToSection("home");
@@ -304,7 +260,6 @@ async function sendRsvp(entry) {
     name: entry.name,
     status: "pending",
     wish: entry.wish,
-    guestType: entry.guestType || "",
     createdAt: entry.createdAt,
     ticketId: entry.ticketId || "",
   });
@@ -324,7 +279,6 @@ form.addEventListener("submit", async (event) => {
     name: String(data.get("name") || "").trim(),
     status: "pending",
     wish: String(data.get("wish") || "").trim(),
-    guestType,
     createdAt: new Date().toISOString(),
     ticketId: generateTicketId(),
     checkedIn: false,
@@ -354,8 +308,6 @@ form.addEventListener("submit", async (event) => {
 ticketOverlay?.addEventListener("click", (event) => {
   if (event.target === ticketOverlay) hideTicket();
 });
-
-if (guestType) applyGuestType(guestType);
 
 function createSparkles() {
   const layer = document.getElementById("sparkles");

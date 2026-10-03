@@ -47,8 +47,6 @@ function render(items) {
   const attending = items.filter((item) => item.status === "attending");
   const declined = items.filter((item) => item.status === "declined");
   const pending = items.filter((item) => item.status === "pending" || !item.status);
-  const women = items.filter((item) => item.guestType === "women");
-  const men = items.filter((item) => item.guestType === "men");
   const entered = items.filter((item) => item.checkedIn).length;
 
   stats.innerHTML = `
@@ -57,12 +55,10 @@ function render(items) {
     <article><strong>${attending.length}</strong><span>موافقة</span></article>
     <article><strong>${declined.length}</strong><span>رفض</span></article>
     <article><strong>${entered}</strong><span>دخلوا الصالة</span></article>
-    <article><strong>${women.length}</strong><span>سيدات</span></article>
-    <article><strong>${men.length}</strong><span>رجال</span></article>
   `;
 
   if (!items.length) {
-    rows.innerHTML = '<tr><td colspan="7">لا توجد طلبات بعد</td></tr>';
+    rows.innerHTML = '<tr><td colspan="6">لا توجد طلبات بعد</td></tr>';
     return;
   }
 
@@ -75,7 +71,6 @@ function render(items) {
     <tr>
       <td>${escapeHtml(item.name || "")}</td>
       <td><span class="status-badge ${statusClass(item.status)}">${statusLabel(item.status || "pending")}</span></td>
-      <td>${guestLabel(item.guestType)}</td>
       <td>${barcode}</td>
       <td>${item.checkedIn ? "دخل" : accepted ? "لم يدخل" : "—"}</td>
       <td>${escapeHtml(item.wish || "—")}</td>
