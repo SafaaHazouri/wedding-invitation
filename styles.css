@@ -555,24 +555,24 @@ body::before {
   box-shadow: 0 16px 40px rgba(111, 45, 56, 0.12);
 }
 
-.zaffa-note {
+.zaffa-box {
   max-width: 760px;
   margin: 28px auto 0;
-  padding: 22px 24px;
+  padding: 22px 28px;
   text-align: center;
-  background: linear-gradient(180deg, #fffaf3, #f4e6d4);
-  border: 1px solid rgba(184, 149, 86, 0.45);
+  background: linear-gradient(180deg, #fbf6ef, #f4e6d8);
+  border: 1px solid rgba(184, 149, 90, 0.45);
   border-radius: 20px;
-  box-shadow: 0 10px 28px rgba(111, 45, 56, 0.06);
+  box-shadow: 0 12px 32px rgba(111, 45, 56, 0.06);
 }
 
-.zaffa-note h4 {
+.zaffa-kicker {
   font-family: var(--font-title);
   color: var(--burgundy);
   margin-bottom: 8px;
 }
 
-.zaffa-note p {
+.zaffa-box p:last-child {
   margin: 0;
   line-height: 2;
   color: var(--ink);
