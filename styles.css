@@ -998,6 +998,12 @@ main {
   color: var(--muted);
 }
 
+.detail-card small {
+  display: block;
+  margin-top: 8px;
+  line-height: 1.8;
+}
+
 .map-btn {
   margin-top: 28px;
   padding: 12px 26px;
