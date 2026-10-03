@@ -166,7 +166,7 @@ body::before {
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 1.15rem;
+  gap: 1.35rem;
   padding: 20% 1.1rem 16%;
   box-sizing: border-box;
 }
@@ -220,11 +220,12 @@ body::before {
   grid-template-rows: auto auto auto;
   align-items: center;
   justify-items: center;
-  width: min(18.5rem, 84cqw);
-  row-gap: clamp(0.2rem, 1.6cqh, 0.45rem);
+  width: min(20rem, 88cqw);
+  row-gap: clamp(0.35rem, 2cqh, 0.7rem);
   column-gap: clamp(0.35rem, 2.4cqw, 0.7rem);
   flex: 0 0 auto;
-  margin: 0.15rem 0 0.25rem;
+  margin: 0.15rem 0 0;
+  padding-bottom: 1.15rem;
 }
 
 .nm {
@@ -248,8 +249,10 @@ body::before {
   grid-column: 2 / 4;
   grid-row: 3;
   justify-self: left;
-  font-size: clamp(3.6rem, 17.5cqw, 5rem);
-  transform: rotate(-6deg);
+  font-size: clamp(3.1rem, 14.5cqw, 4.2rem);
+  line-height: 1.15;
+  margin-bottom: 0.35rem;
+  transform: rotate(-6deg) translateY(-6px);
   animation: nameSafaa 1.25s 3.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -270,7 +273,7 @@ body::before {
 
 @keyframes nameSafaa {
   from { opacity: 0; transform: rotate(-6deg) translate(-20px, 12px); }
-  to { opacity: 1; transform: rotate(-6deg) translate(0, 0); }
+  to { opacity: 1; transform: rotate(-6deg) translateY(-6px); }
 }
 
 @keyframes ringsIn {
@@ -287,7 +290,7 @@ body::before {
   position: relative;
   z-index: 3;
   width: min(18.5rem, 100%);
-  margin: 0;
+  margin: 0.85rem 0 0;
   padding: 8px 10px 10px;
   text-align: center;
   background: rgba(251, 247, 240, 0.88);
@@ -326,15 +329,15 @@ body::before {
 }
 
 @media (max-height: 700px) {
-  .cover-mid { padding: 16% 1rem 12%; gap: 0.85rem; }
+  .cover-mid { padding: 16% 1rem 12%; gap: 1rem; }
   .cover-verse { line-height: 1.75; }
 }
 
 @media (max-height: 580px) {
-  .cover-mid { padding: 14% 0.85rem 10%; gap: 0.65rem; }
+  .cover-mid { padding: 14% 0.85rem 10%; gap: 0.85rem; }
   .cover-verse { font-size: 0.95rem; line-height: 1.6; }
-  .names-stage { row-gap: 0.15rem; }
-  .cover-actions { padding: 6px 8px 8px; }
+  .names-stage { row-gap: 0.3rem; padding-bottom: 0.85rem; }
+  .cover-actions { padding: 6px 8px 8px; margin-top: 0.55rem; }
 }
 
 @media (max-width: 360px) {
@@ -369,7 +372,7 @@ body::before {
   }
 
   .nm-mohammed { transform: rotate(-14deg); }
-  .nm-safaa { transform: rotate(-6deg); }
+  .nm-safaa { transform: rotate(-6deg) translateY(-6px); }
   .rings { transform: rotate(-14deg); }
 
   html { scroll-behavior: auto; }
