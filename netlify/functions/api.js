@@ -169,6 +169,6 @@ exports.handler = async (event) => {
 
     return json(404, { ok: false });
   } catch (error) {
-    return json(500, { ok: false, message: "تعذر حفظ الطلب", error: String(error.message || error) });
+    return json(500, { ok: false, message: "تعذر حفظ الطلب" });
   }
 };
