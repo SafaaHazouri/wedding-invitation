@@ -244,32 +244,12 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 });
 
 async function sendRsvp(entry) {
-  try {
-    const api = await fetch(RSVP_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(entry),
-    });
-    if (api.ok) return true;
-  } catch (error) {
-    // On static hosting the local API is unavailable.
-  }
-
-  const body = new URLSearchParams({
-    "form-name": "rsvp",
-    name: entry.name,
-    status: "pending",
-    invitedBy: entry.invitedBy,
-    wish: entry.wish,
-    createdAt: entry.createdAt,
-    ticketId: entry.ticketId || "",
-  });
-  const response = await fetch("/", {
+  const api = await fetch(RSVP_ENDPOINT, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(entry),
   });
-  if (!response.ok) throw new Error("rsvp-failed");
+  if (!api.ok) throw new Error("rsvp-failed");
   return true;
 }
 
