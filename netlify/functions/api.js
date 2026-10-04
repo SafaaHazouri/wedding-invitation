@@ -1,4 +1,4 @@
-const { getStore } = require("@netlify/blobs");
+const { getStore, connectLambda } = require("@netlify/blobs");
 
 const ADMIN_KEY = "ms2026";
 const TICKET_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -85,6 +85,12 @@ function findTicket(items, ticketId) {
 }
 
 exports.handler = async (event) => {
+  try {
+    connectLambda(event);
+  } catch (error) {
+    // Already connected, or running outside Lambda.
+  }
+
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: jsonHeaders, body: "" };
   }
@@ -163,6 +169,6 @@ exports.handler = async (event) => {
 
     return json(404, { ok: false });
   } catch (error) {
-    return json(500, { ok: false, message: "تعذر حفظ الطلب" });
+    return json(500, { ok: false, message: "تعذر حفظ الطلب", error: String(error.message || error) });
   }
 };
