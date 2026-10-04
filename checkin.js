@@ -27,9 +27,24 @@ function setCameraHint(text) {
   if (cameraHint) cameraHint.textContent = text;
 }
 
+function doorKey() {
+  return localStorage.getItem(ADMIN_KEY_STORAGE) || sessionStorage.getItem(ADMIN_KEY_STORAGE);
+}
+
+function scannedCodeFromUrl() {
+  const params = new URLSearchParams(location.search);
+  return params.get("t") || params.get("id") || params.get("ticket") || "";
+}
+
+function clearScanQuery() {
+  if (location.search) {
+    history.replaceState({}, "", location.pathname);
+  }
+}
+
 async function checkIn(code) {
   if (busy) return;
-  const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+  const key = doorKey();
   const parsed = parseTicketPayload(code);
   const ticketId = (parsed?.ticketId || String(code || "").trim()).toUpperCase();
   if (!ticketId) {
@@ -98,8 +113,10 @@ async function startHtml5Camera() {
       formatsToSupport: formats,
     },
     (text) => {
-      scanInput.value = text;
-      checkIn(text);
+      const parsed = parseTicketPayload(text);
+      const value = parsed?.ticketId || text;
+      scanInput.value = value;
+      checkIn(value);
     },
   );
   camera.hidden = true;
@@ -152,10 +169,19 @@ async function startCamera() {
 }
 
 function unlock(key) {
+  localStorage.setItem(ADMIN_KEY_STORAGE, key);
   sessionStorage.setItem(ADMIN_KEY_STORAGE, key);
   lockCard.hidden = true;
   scanCard.hidden = false;
-  startCamera();
+
+  const fromPhoneScanner = scannedCodeFromUrl();
+  if (fromPhoneScanner) {
+    clearScanQuery();
+    checkIn(fromPhoneScanner);
+  } else {
+    startCamera();
+  }
+  scanInput?.focus();
 }
 
 lockForm.addEventListener("submit", (event) => {
@@ -178,7 +204,15 @@ scanForm.addEventListener("submit", async (event) => {
   if (!code) return;
   await checkIn(code);
   scanInput.value = "";
+  scanInput.focus();
 });
 
-const saved = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+scanInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    scanForm.requestSubmit();
+  }
+});
+
+const saved = doorKey();
 if (saved) unlock(saved);

@@ -56,3 +56,13 @@
   from = "/door/"
   to = "/checkin.html"
   status = 200
+
+[[redirects]]
+  from = "/enter"
+  to = "/checkin.html"
+  status = 200
+
+[[redirects]]
+  from = "/enter/"
+  to = "/checkin.html"
+  status = 200

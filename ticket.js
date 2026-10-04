@@ -17,9 +17,27 @@ function ticketPayload(entry) {
   ].join("|");
 }
 
+function ticketCheckinUrl(ticketId) {
+  return `https://wedding-invitationmm.netlify.app/enter?t=${encodeURIComponent(ticketId)}`;
+}
+
 function parseTicketPayload(text) {
   const raw = String(text || "").trim();
   if (!raw) return null;
+
+  const fromQuery = raw.match(/[?&](?:t|id|ticket)=([^&\s#]+)/i);
+  if (fromQuery) {
+    return { ticketId: decodeURIComponent(fromQuery[1]).trim().toUpperCase() };
+  }
+
+  try {
+    const url = new URL(raw);
+    const id = url.searchParams.get("t") || url.searchParams.get("id") || url.searchParams.get("ticket");
+    if (id) return { ticketId: id.trim().toUpperCase() };
+  } catch (error) {
+    // Not a URL.
+  }
+
   if (raw.includes("|")) {
     const [ticketId, name, status, guestType, guests] = raw.split("|");
     if (!ticketId) return null;

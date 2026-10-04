@@ -106,9 +106,8 @@ function renderMyTicket(entry = getSavedTicket()) {
 
 function ticketHtml(entry) {
   const accepted = entry.status === "attending";
-  const payload = ticketPayload(entry);
   const barcode = accepted ? `
-    <img class="ticket-qr" src="${qrImageUrl(payload)}" alt="باركود الدعوة" />
+    <img class="ticket-qr" src="${qrImageUrl(ticketCheckinUrl(entry.ticketId))}" alt="باركود الدعوة" />
     ${code128Svg(entry.ticketId)}
     <strong class="ticket-code">${escapeHtml(entry.ticketId)}</strong>
     <p class="ticket-scan-hint">اعرضوا هذا الباركود عند باب الصالة ليتم مسحه</p>
