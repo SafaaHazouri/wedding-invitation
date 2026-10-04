@@ -1424,6 +1424,18 @@ fieldset {
   text-align: center;
 }
 
+.door-actions {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.photo-scan-btn {
+  display: block;
+  text-align: center;
+  background: var(--burgundy);
+}
+
 .door-panel .scan-result {
   font-size: 1.15rem;
   font-weight: 700;

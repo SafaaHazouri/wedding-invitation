@@ -7,17 +7,17 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>مسح الدخول — باب الصالة</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=El+Messiri:wght@600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body class="admin-body door-body">
   <main class="admin-shell door-shell">
     <section class="admin-card" id="lockCard">
-      <img class="admin-logo" src="logo-ms.png" alt="" />
+      <img class="admin-logo" src="/logo-ms.png" alt="" />
       <h1>باب الصالة</h1>
-      <p>ادخلوا كلمة المرور مرة واحدة. بعدها امسحوا باركود الدعوة بكاميرا الموبايل أو بماسح الباركود في الهاتف.</p>
+      <p>ادخلوا كلمة مرور الباب، ثم اضغطوا تشغيل الكاميرا وامسحوا QR الدعوة.</p>
       <form id="lockForm">
         <input type="password" id="adminKey" placeholder="كلمة مرور الباب" required />
-        <button type="submit" class="submit-btn">بدء المسح</button>
+        <button type="submit" class="submit-btn">دخول</button>
         <p class="form-note" id="lockNote" hidden></p>
       </form>
     </section>
@@ -26,7 +26,7 @@
       <header class="admin-head">
         <div>
           <h1>مسح باركود الدخول</h1>
-          <p>امسحوا من كاميرا الهاتف أو تطبيق الماسح، أو شغّلوا الكاميرا هنا</p>
+          <p>اضغطوا تشغيل الكاميرا، أو صوّروا الباركود من الزر أدناه</p>
         </div>
       </header>
 
@@ -34,18 +34,25 @@
         <div id="reader" class="camera-reader"></div>
         <video id="camera" class="checkin-video" playsinline muted hidden></video>
       </div>
-      <button type="button" class="submit-btn" id="startCameraBtn">تشغيل الكاميرا</button>
-      <p class="camera-hint" id="cameraHint">اسمحوا للمتصفح باستخدام الكاميرا عند الطلب.</p>
+
+      <div class="door-actions">
+        <button type="button" class="submit-btn" id="startCameraBtn">تشغيل الكاميرا</button>
+        <label class="submit-btn photo-scan-btn">
+          تصوير الباركود
+          <input id="photoScan" type="file" accept="image/*" capture="environment" hidden />
+        </label>
+      </div>
+      <p class="camera-hint" id="cameraHint">اضغطوا تشغيل الكاميرا واسمحوا بالوصول عند ظهور الطلب.</p>
 
       <form class="scan-box" id="scanForm">
-        <input id="scanInput" type="text" inputmode="text" autocomplete="off" placeholder="أو اكتبوا رمز التذكرة هنا" />
+        <input id="scanInput" type="text" inputmode="text" autocomplete="off" placeholder="أو اكتبوا رمز التذكرة مثل MS123ABC" />
         <button type="submit" class="submit-btn">تأكيد الدخول</button>
       </form>
       <p class="scan-result" id="scanResult" hidden></p>
     </section>
   </main>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="ticket.js"></script>
-  <script src="checkin.js"></script>
+  <script src="/html5-qrcode.min.js"></script>
+  <script src="/ticket.js"></script>
+  <script src="/checkin.js"></script>
 </body>
 </html>

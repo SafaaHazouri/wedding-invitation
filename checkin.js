@@ -13,9 +13,11 @@ const scanResult = document.getElementById("scanResult");
 const camera = document.getElementById("camera");
 const startCameraBtn = document.getElementById("startCameraBtn");
 const cameraHint = document.getElementById("cameraHint");
+const photoScan = document.getElementById("photoScan");
 
 let busy = false;
 let html5Scanner = null;
+let cameraRunning = false;
 
 function showScan(message, ok) {
   scanResult.hidden = false;
@@ -38,21 +40,35 @@ function scannedCodeFromUrl() {
 
 function clearScanQuery() {
   if (location.search) {
-    history.replaceState({}, "", location.pathname);
+    history.replaceState({}, "", `${location.pathname}`);
   }
+}
+
+function handleDecodedText(text) {
+  const parsed = parseTicketPayload(text);
+  const value = parsed?.ticketId || String(text || "").trim();
+  if (!value) return;
+  scanInput.value = value;
+  checkIn(value);
 }
 
 async function checkIn(code) {
   if (busy) return;
   const key = doorKey();
+  if (!key) {
+    showScan("سجّلوا الدخول بكلمة مرور الباب أولاً", false);
+    return;
+  }
+
   const parsed = parseTicketPayload(code);
   const ticketId = (parsed?.ticketId || String(code || "").trim()).toUpperCase();
-  if (!ticketId) {
+  if (!ticketId || ticketId.length < 4) {
     showScan("لم يُقرأ باركود صالح", false);
     return;
   }
 
   busy = true;
+  showScan("جاري التحقق من التذكرة...", true);
   try {
     const response = await fetch(`${API_BASE}/api/checkin`, {
       method: "POST",
@@ -62,34 +78,37 @@ async function checkIn(code) {
       },
       body: JSON.stringify({ ticketId }),
     });
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
       showScan(payload.message || "تعذر تسجيل الدخول", false);
       return;
     }
     showScan(`${payload.entry.name}: تم تسجيل الدخول`, true);
   } catch (error) {
-    if (parsed?.name) {
-      if (parsed.status && parsed.status !== "attending") {
-        const reason = parsed.status === "pending" ? "بانتظار الموافقة" : "رفض الدعوة، لا يُسمح بالدخول";
-        showScan(`${parsed.name}: ${reason}`, false);
-        return;
-      }
-      showScan(`${parsed.name}: تذكرة صالحة. سجّلوا الدخول يدوياً إن لزم.`, true);
-      return;
-    }
-    showScan("تعذر الاتصال بقائمة الحضور", false);
+    showScan("تعذر الاتصال بقائمة الحضور. تأكدوا من الإنترنت.", false);
   } finally {
     window.setTimeout(() => {
       busy = false;
-    }, 1800);
+    }, 1500);
   }
+}
+
+async function pickCameraId() {
+  const cameras = await Html5Qrcode.getCameras();
+  if (!cameras?.length) throw new Error("no-camera");
+  const back = cameras.find((cam) => /back|rear|environment|خلف/i.test(cam.label || ""));
+  return (back || cameras[cameras.length - 1]).id;
 }
 
 async function startHtml5Camera() {
   if (typeof Html5Qrcode !== "function") return false;
   const reader = document.getElementById("reader");
   if (!reader) return false;
+
+  if (html5Scanner && cameraRunning) {
+    setCameraHint("الكاميرا تعمل. قرّبوا QR الدعوة من الإطار.");
+    return true;
+  }
 
   if (html5Scanner) {
     try {
@@ -99,59 +118,51 @@ async function startHtml5Camera() {
     }
   }
 
-  html5Scanner = new Html5Qrcode("reader");
-  const formats = typeof Html5QrcodeSupportedFormats === "object"
-    ? [Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.CODE_128]
-    : undefined;
-
+  const cameraId = await pickCameraId();
+  html5Scanner = new Html5Qrcode("reader", { verbose: false });
   await html5Scanner.start(
-    { facingMode: "environment" },
+    cameraId,
     {
-      fps: 8,
-      qrbox: { width: 240, height: 240 },
-      aspectRatio: 1,
-      formatsToSupport: formats,
+      fps: 12,
+      qrbox(viewfinderWidth, viewfinderHeight) {
+        const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.7);
+        return { width: Math.max(180, size), height: Math.max(180, size) };
+      },
     },
-    (text) => {
-      const parsed = parseTicketPayload(text);
-      const value = parsed?.ticketId || text;
-      scanInput.value = value;
-      checkIn(value);
-    },
+    handleDecodedText,
   );
+  cameraRunning = true;
   camera.hidden = true;
-  setCameraHint("الكاميرا تعمل. قرّبوا الباركود داخل الإطار.");
+  setCameraHint("الكاميرا تعمل. قرّبوا رمز QR حتى يُقرأ.");
   return true;
 }
 
-async function startNativeCamera() {
-  if (!navigator.mediaDevices?.getUserMedia || typeof BarcodeDetector !== "function") {
-    return false;
-  }
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: { ideal: "environment" } },
-  });
-  camera.srcObject = stream;
-  camera.hidden = false;
-  await camera.play();
-  const detector = new BarcodeDetector({ formats: ["qr_code", "code_128"] });
-  const tick = async () => {
-    if (camera.readyState >= 2) {
-      try {
-        const codes = await detector.detect(camera);
-        if (codes[0]?.rawValue) {
-          scanInput.value = codes[0].rawValue;
-          await checkIn(codes[0].rawValue);
-        }
-      } catch (error) {
-        // Keep scanning.
+async function scanPhoto(file) {
+  if (!file) return;
+  setCameraHint("جاري قراءة الصورة...");
+  try {
+    if (typeof Html5Qrcode === "function") {
+      const temp = new Html5Qrcode("reader", { verbose: false });
+      const text = await temp.scanFile(file, true);
+      await temp.clear();
+      handleDecodedText(text);
+      setCameraHint("تمت قراءة الصورة.");
+      return;
+    }
+    if (typeof BarcodeDetector === "function") {
+      const detector = new BarcodeDetector({ formats: ["qr_code", "code_128"] });
+      const bitmap = await createImageBitmap(file);
+      const codes = await detector.detect(bitmap);
+      if (codes[0]?.rawValue) {
+        handleDecodedText(codes[0].rawValue);
+        setCameraHint("تمت قراءة الصورة.");
+        return;
       }
     }
-    requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-  setCameraHint("الكاميرا تعمل. وجّهوها إلى باركود الدعوة.");
-  return true;
+    setCameraHint("لم يُقرأ باركود من الصورة. أعيدوا التصوير أقرب وأوضح.");
+  } catch (error) {
+    setCameraHint("لم يُقرأ الباركود من الصورة. صوّروه أقرب وبضوء أوضح.");
+  }
 }
 
 async function startCamera() {
@@ -159,10 +170,10 @@ async function startCamera() {
   setCameraHint("جاري تشغيل الكاميرا...");
   try {
     if (await startHtml5Camera()) return;
-    if (await startNativeCamera()) return;
-    setCameraHint("تعذر تشغيل الكاميرا. اكتبوا رمز التذكرة يدوياً.");
+    setCameraHint("تعذر تشغيل الكاميرا. استخدموا زر تصوير الباركود.");
   } catch (error) {
-    setCameraHint("اسمحوا باستخدام الكاميرا من إعدادات المتصفح، ثم اضغطوا تشغيل الكاميرا.");
+    cameraRunning = false;
+    setCameraHint("اسمحوا باستخدام الكاميرا، أو اضغطوا تصوير الباركود.");
   } finally {
     startCameraBtn.disabled = false;
   }
@@ -178,10 +189,7 @@ function unlock(key) {
   if (fromPhoneScanner) {
     clearScanQuery();
     checkIn(fromPhoneScanner);
-  } else {
-    startCamera();
   }
-  scanInput?.focus();
 }
 
 lockForm.addEventListener("submit", (event) => {
@@ -198,6 +206,12 @@ lockForm.addEventListener("submit", (event) => {
 
 startCameraBtn?.addEventListener("click", startCamera);
 
+photoScan?.addEventListener("change", (event) => {
+  const file = event.target.files?.[0];
+  scanPhoto(file);
+  event.target.value = "";
+});
+
 scanForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const code = scanInput.value.trim();
@@ -205,13 +219,6 @@ scanForm.addEventListener("submit", async (event) => {
   await checkIn(code);
   scanInput.value = "";
   scanInput.focus();
-});
-
-scanInput?.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    scanForm.requestSubmit();
-  }
 });
 
 const saved = doorKey();

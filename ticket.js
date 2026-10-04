@@ -18,7 +18,7 @@ function ticketPayload(entry) {
 }
 
 function ticketCheckinUrl(ticketId) {
-  return `https://wedding-invitationmm.netlify.app/enter?t=${encodeURIComponent(ticketId)}`;
+  return `https://wedding-invitationmm.netlify.app/checkin.html?t=${encodeURIComponent(ticketId)}`;
 }
 
 function parseTicketPayload(text) {
