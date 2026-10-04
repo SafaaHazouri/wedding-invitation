@@ -1,4 +1,7 @@
 const ADMIN_KEY_STORAGE = "mohammed-safaa-admin";
+const API_BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+  ? "https://wedding-invitationmm.netlify.app"
+  : "";
 
 const lockCard = document.getElementById("lockCard");
 const listCard = document.getElementById("listCard");
@@ -94,7 +97,7 @@ function adminHeaders(key) {
 }
 
 async function loadList(key) {
-  const response = await fetch("/api/rsvps", {
+  const response = await fetch(`${API_BASE}/api/rsvps`, {
     headers: { "X-Admin-Key": key },
   });
   if (response.status === 404) {
@@ -106,7 +109,7 @@ async function loadList(key) {
 
 async function decide(ticketId, status) {
   const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
-  const response = await fetch("/api/decide", {
+  const response = await fetch(`${API_BASE}/api/decide`, {
     method: "POST",
     headers: adminHeaders(key),
     body: JSON.stringify({ ticketId, status }),
@@ -129,7 +132,7 @@ async function checkIn(code) {
     return;
   }
 
-  const response = await fetch("/api/checkin", {
+  const response = await fetch(`${API_BASE}/api/checkin`, {
     method: "POST",
     headers: adminHeaders(key),
     body: JSON.stringify({ ticketId }),

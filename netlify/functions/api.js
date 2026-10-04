@@ -6,6 +6,9 @@ const TICKET_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const jsonHeaders = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, X-Admin-Key",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
 function json(statusCode, payload) {

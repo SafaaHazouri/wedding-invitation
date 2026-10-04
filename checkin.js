@@ -1,4 +1,7 @@
 const ADMIN_KEY_STORAGE = "mohammed-safaa-admin";
+const API_BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+  ? "https://wedding-invitationmm.netlify.app"
+  : "";
 
 const lockCard = document.getElementById("lockCard");
 const scanCard = document.getElementById("scanCard");
@@ -25,7 +28,7 @@ async function checkIn(code) {
   }
 
   try {
-    const response = await fetch("/api/checkin", {
+    const response = await fetch(`${API_BASE}/api/checkin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
