@@ -46,3 +46,13 @@
   from = "/card/"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/door"
+  to = "/checkin.html"
+  status = 200
+
+[[redirects]]
+  from = "/door/"
+  to = "/checkin.html"
+  status = 200

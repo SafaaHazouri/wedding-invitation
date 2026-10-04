@@ -1386,6 +1386,51 @@ fieldset {
   margin-bottom: 16px;
 }
 
+.door-body .admin-shell {
+  max-width: 520px;
+  padding: 20px 16px 40px;
+}
+
+.door-panel {
+  padding: 20px 16px 24px;
+}
+
+.camera-wrap {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 14px;
+  border-radius: 20px;
+  background: #111;
+  min-height: 260px;
+}
+
+.camera-reader,
+.camera-reader video,
+#reader {
+  width: 100% !important;
+  min-height: 260px;
+  border: 0 !important;
+}
+
+.camera-reader img,
+#reader img {
+  display: none !important;
+}
+
+.camera-hint {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.8;
+  text-align: center;
+}
+
+.door-panel .scan-result {
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+}
+
 .submit-btn {
   margin-top: 8px;
   padding: 13px 18px;

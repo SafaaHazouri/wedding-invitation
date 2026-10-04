@@ -11,6 +11,11 @@ const scanForm = document.getElementById("scanForm");
 const scanInput = document.getElementById("scanInput");
 const scanResult = document.getElementById("scanResult");
 const camera = document.getElementById("camera");
+const startCameraBtn = document.getElementById("startCameraBtn");
+const cameraHint = document.getElementById("cameraHint");
+
+let busy = false;
+let html5Scanner = null;
 
 function showScan(message, ok) {
   scanResult.hidden = false;
@@ -18,7 +23,12 @@ function showScan(message, ok) {
   scanResult.textContent = message;
 }
 
+function setCameraHint(text) {
+  if (cameraHint) cameraHint.textContent = text;
+}
+
 async function checkIn(code) {
+  if (busy) return;
   const key = sessionStorage.getItem(ADMIN_KEY_STORAGE);
   const parsed = parseTicketPayload(code);
   const ticketId = (parsed?.ticketId || String(code || "").trim()).toUpperCase();
@@ -27,6 +37,7 @@ async function checkIn(code) {
     return;
   }
 
+  busy = true;
   try {
     const response = await fetch(`${API_BASE}/api/checkin`, {
       method: "POST",
@@ -53,37 +64,90 @@ async function checkIn(code) {
       return;
     }
     showScan("تعذر الاتصال بقائمة الحضور", false);
+  } finally {
+    window.setTimeout(() => {
+      busy = false;
+    }, 1800);
   }
 }
 
-async function startCamera() {
-  if (!navigator.mediaDevices?.getUserMedia || typeof BarcodeDetector !== "function") return;
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-    });
-    camera.srcObject = stream;
-    camera.hidden = false;
-    await camera.play();
-    const detector = new BarcodeDetector({ formats: ["qr_code", "code_128"] });
-    const tick = async () => {
-      if (camera.readyState >= 2) {
-        try {
-          const codes = await detector.detect(camera);
-          if (codes[0]?.rawValue) {
-            scanInput.value = codes[0].rawValue;
-            await checkIn(codes[0].rawValue);
-            await new Promise((resolve) => setTimeout(resolve, 1600));
-          }
-        } catch (error) {
-          // Keep scanning.
+async function startHtml5Camera() {
+  if (typeof Html5Qrcode !== "function") return false;
+  const reader = document.getElementById("reader");
+  if (!reader) return false;
+
+  if (html5Scanner) {
+    try {
+      await html5Scanner.stop();
+    } catch (error) {
+      // Already stopped.
+    }
+  }
+
+  html5Scanner = new Html5Qrcode("reader");
+  const formats = typeof Html5QrcodeSupportedFormats === "object"
+    ? [Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.CODE_128]
+    : undefined;
+
+  await html5Scanner.start(
+    { facingMode: "environment" },
+    {
+      fps: 8,
+      qrbox: { width: 240, height: 240 },
+      aspectRatio: 1,
+      formatsToSupport: formats,
+    },
+    (text) => {
+      scanInput.value = text;
+      checkIn(text);
+    },
+  );
+  camera.hidden = true;
+  setCameraHint("الكاميرا تعمل. قرّبوا الباركود داخل الإطار.");
+  return true;
+}
+
+async function startNativeCamera() {
+  if (!navigator.mediaDevices?.getUserMedia || typeof BarcodeDetector !== "function") {
+    return false;
+  }
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { ideal: "environment" } },
+  });
+  camera.srcObject = stream;
+  camera.hidden = false;
+  await camera.play();
+  const detector = new BarcodeDetector({ formats: ["qr_code", "code_128"] });
+  const tick = async () => {
+    if (camera.readyState >= 2) {
+      try {
+        const codes = await detector.detect(camera);
+        if (codes[0]?.rawValue) {
+          scanInput.value = codes[0].rawValue;
+          await checkIn(codes[0].rawValue);
         }
+      } catch (error) {
+        // Keep scanning.
       }
-      requestAnimationFrame(tick);
-    };
+    }
     requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  setCameraHint("الكاميرا تعمل. وجّهوها إلى باركود الدعوة.");
+  return true;
+}
+
+async function startCamera() {
+  startCameraBtn.disabled = true;
+  setCameraHint("جاري تشغيل الكاميرا...");
+  try {
+    if (await startHtml5Camera()) return;
+    if (await startNativeCamera()) return;
+    setCameraHint("تعذر تشغيل الكاميرا. اكتبوا رمز التذكرة يدوياً.");
   } catch (error) {
-    camera.hidden = true;
+    setCameraHint("اسمحوا باستخدام الكاميرا من إعدادات المتصفح، ثم اضغطوا تشغيل الكاميرا.");
+  } finally {
+    startCameraBtn.disabled = false;
   }
 }
 
@@ -91,7 +155,6 @@ function unlock(key) {
   sessionStorage.setItem(ADMIN_KEY_STORAGE, key);
   lockCard.hidden = true;
   scanCard.hidden = false;
-  scanInput.focus();
   startCamera();
 }
 
@@ -107,13 +170,14 @@ lockForm.addEventListener("submit", (event) => {
   unlock(key);
 });
 
+startCameraBtn?.addEventListener("click", startCamera);
+
 scanForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const code = scanInput.value.trim();
   if (!code) return;
   await checkIn(code);
   scanInput.value = "";
-  scanInput.focus();
 });
 
 const saved = sessionStorage.getItem(ADMIN_KEY_STORAGE);
